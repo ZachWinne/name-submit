@@ -3,16 +3,14 @@ import React, { useState } from "react";
 
 function App() {
   const [isMousedOver, setMouseOver] = useState(false)
-  const [name, setName] = useState("");
   const [heading, setHeading] = useState("");
-
-  function handleChange(event) {
-    setName(event.target.value);
-    console.log(event.target.value);
-  }
+  const [fullName, setFullName] = useState({
+    fName: "",
+    lName: ""
+  });
 
   function handleClick(event) {
-    setHeading(name);
+    setHeading(fullName.fName + ' ' + fullName.lName)
     event.preventDefault();
   }
 
@@ -24,16 +22,46 @@ function App() {
     setMouseOver(false)
   }
 
+  function updateName(event) {
+    // const newName = event.target.value;
+    // const nameType = event.target.name;
+
+    //destructuring event.target
+    const { value: newName, name: nameType } = event.target;
+
+    setFullName((prevName) => {
+      if (nameType === "fName") {
+        return {
+          fName: newName,
+          lName: prevName.lName
+        };
+      } else if (nameType === "lName") {
+        return {
+          fName: prevName.fName,
+          lName: newName
+        };
+      }
+    });
+  }
+
   return (
     <div className="container">
-    <h1>Hello {heading}</h1>
+      <h1>
+        Hello {heading}
+      </h1>
     <form onSubmit={handleClick}>
-      <input
-        onChange={handleChange}
-        type="text"
-        placeholder="What's your name?"
-        value={name}
-      />
+    <input
+          name="fName"
+          //value={fullName.fName}
+          placeholder="First Name"
+          onChange={updateName}
+        />
+        <input
+          name="lName"
+          //value={fullName.lName}
+          placeholder="Last Name"
+          onChange={updateName}
+        />
       <button
         style={{backgroundColor: isMousedOver ? "black" : "white"}}
         type="submit"
